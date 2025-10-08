@@ -8,6 +8,7 @@ Make sure your `main` branch contains:
     - This Juypter Notebook can not contain more than 2000 words.
     - All other code should also be contained in this repository, but should be imported into the notebook from the `src` folder.
 or,
+
 1. A single Python file in the root of this repository called `main.py`
     - This file should not contain more than 2000 words.
     - All other code should also be contained in this repository, but should be imported into the notebook from the `src` folder.
