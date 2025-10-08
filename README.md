@@ -1,2 +1,41 @@
-# analytics_cup_2026_analyst
-Submission template for the Analyst Track of the SkillCorner X PySport Analytics Cup 2026. Your submission should be on the main branch of your fork of this repository. 
+# SkillCorner X PySport Analytics Cup 2026
+This repository contains the submission template for the SkillCorner X PySport Analytics Cup **Analyst Track**. 
+Your submission for the **Analyst Track** should be on the `main` branch of your own fork of this repository.
+
+## Submitting
+Make sure your `main` branch contains:
+1. A single Jupyter Notebook in the root of this repository called `submission.ipynb`
+    - This Juypter Notebook can not contain more than 2000 words.
+    - All other code should also be contained in this repository, but should be imported into the notebook from the `src` folder.
+or,
+1. A single Python file in the root of this repository called `main.py`
+    - This file should not contain more than 2000 words.
+    - All other code should also be contained in this repository, but should be imported into the notebook from the `src` folder.
+
+2. An abstract of maximum 300 words that follows the **Analyst Track Abstract Template**.
+3. Add a URL to a screen recording video of maximum 60 seconds that shows your work. Add it under the **Video URL** Section below. (Use YouTube, or any other site to share this video).
+4. Submit your GitHub repository on the [Analytics Cup Pretalx page](https://pretalx.pysport.org)
+
+Finally:
+- Make sure your GitHub repository does **not** contain big data files. The tracking data should be loaded directly from the [Analytics Cup Data GitHub Repository](https://github.com/SkillCorner/opendata). For more information on how to load the data directly from GitHub please see this [Jupyter Notebook](https://github.com/SkillCorner/opendata/blob/master/resources/getting-started-skc-tracking-kloppy.ipynb).
+- Make sure the `submission.ipynb` notebook runs on a clean environment, or
+- Provide clear and concise instructions how to run the `main.py` (e.g. `streamlit run main.py`) if applicable in the **Run Instructions** Section below.
+
+_⚠️ Not adhering to these submission rules may result in a point deduction._
+
+---
+
+## Analyst Track Abstract Template (max. 300 words)
+#### Introduction
+
+#### Usecase(s)
+
+#### Potential Audience
+
+---
+
+## Video URL
+
+---
+
+## Run Instructions
