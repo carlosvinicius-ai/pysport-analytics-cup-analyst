@@ -210,9 +210,3 @@ __marimo__/
 data/
 reports/*.png
 reports/*.html
-
-# Agent files
-AGENTS.md
-AGENTS,md
-
-
