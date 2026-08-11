@@ -12,10 +12,11 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
 
 ## 📌 MARCO 1: Engenharia de Dados Espaciais & Domínio (Clean Architecture)
 
-- [ ] **Tarefa 1.1: Entidades Puras de Domínio (`src/domain/entities/player.py`, `match.py`)**
+- [x] **Tarefa 1.1: Entidades Puras de Domínio (`src/domain/entities/player.py`, `match.py`)**
   - **Camada:** `Domain / Entities`
   - **Descrição:** Criar dataclasses puras `Player`, `Team`, `PitchDimensions` e `Match` sem dependências I/O ou de frameworks.
   - **Verificação:** Testes unitários em `tests/unit/domain/test_entities.py`.
+
 
 - [ ] **Tarefa 1.2: Entidades de Eventos Espaciais e Frames (`src/domain/entities/event.py`, `frame.py`)**
   - **Camada:** `Domain / Entities`
