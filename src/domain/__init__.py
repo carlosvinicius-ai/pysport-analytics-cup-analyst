@@ -1,1 +1,1 @@
-"""Domain layer for SkillCorner Sports Analytics."""
+"""Camada de domínio para Sports Analytics da SkillCorner."""

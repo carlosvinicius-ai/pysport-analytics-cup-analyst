@@ -1,7 +1,7 @@
-"""Match domain entities.
+"""Entidades de domínio para partidas de futebol.
 
-Pure business entities representing matches, teams, stadiums, pitch dimensions, and periods.
-Clean Architecture Domain layer - Zero external I/O or database dependencies.
+Entidades de negócio puras representando partidas, equipes, estádios, dimensões do gramado e períodos.
+Camada de Domínio da Clean Architecture - Zero dependências de I/O externo ou bibliotecas de terceiros.
 """
 
 from dataclasses import dataclass, field
@@ -12,19 +12,19 @@ from src.domain.entities.player import Player
 
 @dataclass(frozen=True)
 class PitchDimensions:
-    """Represents the pitch length and width in meters."""
+    """Representa o comprimento e a largura do gramado em metros."""
     length: float
     width: float
 
     @property
     def area(self) -> float:
-        """Calculate total pitch area in square meters."""
+        """Calcula a área total do campo em metros quadrados."""
         return self.length * self.width
 
 
 @dataclass(frozen=True)
 class Team:
-    """Represents a football club/team entity."""
+    """Representa uma equipe/clube de futebol."""
     id: int
     name: str
     short_name: str
@@ -34,7 +34,7 @@ class Team:
 
 @dataclass(frozen=True)
 class Stadium:
-    """Represents a stadium entity."""
+    """Representa um estádio de futebol."""
     id: int
     name: str
     city: Optional[str] = None
@@ -43,7 +43,7 @@ class Stadium:
 
 @dataclass(frozen=True)
 class MatchPeriod:
-    """Represents a period of play (1st half, 2nd half, overtime)."""
+    """Representa um período de jogo (1º tempo, 2º tempo, prorrogação)."""
     period: int
     name: str
     start_frame: int
@@ -54,7 +54,7 @@ class MatchPeriod:
 
 @dataclass
 class Match:
-    """Represents a football match entity."""
+    """Representa a entidade de uma partida de futebol."""
     id: int
     date_time: Union[str, datetime]
     home_team: Team
@@ -71,12 +71,12 @@ class Match:
     players: List[Player] = field(default_factory=list)
 
     def get_player(self, player_id: int) -> Optional[Player]:
-        """Find a player by ID in the match roster."""
+        """Busca um jogador pelo ID no elenco escalado na partida."""
         for p in self.players:
             if p.id == player_id:
                 return p
         return None
 
     def get_team_players(self, team_id: int) -> List[Player]:
-        """Get list of players belonging to a specific team ID."""
+        """Retorna a lista de jogadores de uma determinada equipe na partida."""
         return [p for p in self.players if p.team_id == team_id]

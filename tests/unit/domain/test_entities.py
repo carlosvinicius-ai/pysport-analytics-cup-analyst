@@ -1,4 +1,4 @@
-"""Unit tests for domain entities (Player, Team, PitchDimensions, Match)."""
+"""Testes unitários para as entidades puras de domínio (Player, Team, PitchDimensions, Match)."""
 
 import pytest
 from src.domain.entities.player import Player, PlayerRole, PlayerPlayingTime
@@ -6,6 +6,7 @@ from src.domain.entities.match import Match, Team, PitchDimensions, Stadium, Mat
 
 
 def test_player_role_creation():
+    """Valida a instanciação e atributos da classe PlayerRole."""
     role = PlayerRole(id=1, name="Center Back", acronym="CB", position_group="Defender")
     assert role.id == 1
     assert role.name == "Center Back"
@@ -14,6 +15,7 @@ def test_player_role_creation():
 
 
 def test_player_full_name_and_defaults():
+    """Valida a concatenação de nome completo e valores padrão da entidade Player."""
     player = Player(
         id=10,
         short_name="C. Ronaldo",
@@ -30,11 +32,13 @@ def test_player_full_name_and_defaults():
 
 
 def test_player_fallback_full_name():
+    """Valida o uso do short_name como fallback quando first/last name não são informados."""
     player = Player(id=20, short_name="Pelé")
     assert player.full_name == "Pelé"
 
 
 def test_pitch_dimensions_area():
+    """Valida o cálculo de área total do gramado em metros quadrados."""
     pitch = PitchDimensions(length=105.0, width=68.0)
     assert pitch.length == 105.0
     assert pitch.width == 68.0
@@ -42,6 +46,7 @@ def test_pitch_dimensions_area():
 
 
 def test_match_entity_and_roster_methods():
+    """Valida a entidade Match e os métodos de consulta do elenco por atleta e por equipe."""
     home_team = Team(id=1, name="Home Club", short_name="HOM", acronym="HOM")
     away_team = Team(id=2, name="Away Club", short_name="AWY", acronym="AWY")
     pitch = PitchDimensions(length=100.0, width=64.0)
@@ -64,7 +69,7 @@ def test_match_entity_and_roster_methods():
     assert match.away_team.short_name == "AWY"
     assert len(match.players) == 3
 
-    # Test roster helper methods
+    # Métodos auxiliares de consulta
     found_player = match.get_player(102)
     assert found_player is not None
     assert found_player.short_name == "Player 2"

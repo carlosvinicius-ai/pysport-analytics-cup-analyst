@@ -20,15 +20,20 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
   - **Camada:** `Documentação / Governança`
   - **Descrição:** Documentar a decisão de adoção da Clean Architecture e do Polars para parsing de dados espaciais de alta performance.
 
+- [x] **Governança de ADRs: Registro da ADR 0002 (`docs/adr/0002-representacao-entidades-espaciais-e-coordenadas.md`)**
+  - **Camada:** `Documentação / Governança`
+  - **Descrição:** Documentar representação em metros reais, imutabilidade com `frozen=True` e completude de atributos espaciais.
+
 - [x] **Tarefa 1.1: Entidades Puras de Domínio (`src/domain/entities/player.py`, `match.py`)**
   - **Camada:** `Domain / Entities`
   - **Descrição:** Criar dataclasses puras `Player`, `Team`, `PitchDimensions` e `Match` sem dependências I/O ou de frameworks.
   - **Verificação:** Testes unitários em `tests/unit/domain/test_entities.py`.
 
-- [ ] **Tarefa 1.2: Entidades de Eventos Espaciais e Frames (`src/domain/entities/event.py`, `frame.py`)**
+- [x] **Tarefa 1.2: Entidades de Eventos Espaciais e Frames (`src/domain/entities/event.py`, `frame.py`)**
   - **Camada:** `Domain / Entities`
   - **Descrição:** Criar dataclasses `PassEvent`, `OffBallRunEvent` e `TrackingFrame` representando coordenadas ($x, y$), timestamp, pressão, separação espacial e contexto da linha defensiva.
   - **Verificação:** Testes unitários em `tests/unit/domain/test_events.py`.
+
 
 - [ ] **Tarefa 1.3: Protocolos e Interfaces de Repositório (`src/domain/protocols/repository.py`)**
   - **Camada:** `Domain / Protocols`

@@ -1,1 +1,1 @@
-"""Parsers package for SkillCorner JSON data sources."""
+"""Pacote de parsers para fontes de dados JSON e CSV da SkillCorner."""

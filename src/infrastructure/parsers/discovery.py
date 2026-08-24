@@ -1,8 +1,8 @@
-"""SkillCorner Data Discovery Parser.
+"""Parser de Descoberta e Inspeção dos Dados da SkillCorner.
 
-Infrastructure component responsible for inspecting local SkillCorner datasets,
-extracting schemas, key relationships, data volume metrics, and generating
-a structured markdown report (reports/DATA_STRUCTURE.md) following Clean Architecture.
+Componente de infraestrutura responsável por inspecionar localmente as bases da SkillCorner,
+extrair schemas, tipos de dados, níveis de aninhamento, relacionamentos de chaves e métricas
+de volumetria, gerando o relatório estruturado reports/DATA_STRUCTURE.md sob a Clean Architecture.
 """
 
 from dataclasses import dataclass, field
@@ -13,7 +13,7 @@ import sys
 from typing import Any, Dict, List, Set, Union
 import pandas as pd
 
-# Ensure standard UTF-8 console output on Windows
+# Garante saída UTF-8 padrão no console Windows
 if sys.platform == "win32":
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -24,7 +24,7 @@ if sys.platform == "win32":
 
 @dataclass
 class DatasetMetrics:
-    """Dataclass holding summary metrics of the SkillCorner dataset."""
+    """Dataclass com as métricas resumidas do dataset da SkillCorner."""
     total_matches: int = 0
     unique_players: Set[int] = field(default_factory=set)
     unique_teams: Set[int] = field(default_factory=set)
@@ -35,15 +35,15 @@ class DatasetMetrics:
 
 
 def get_json_schema(data: Any, max_depth: int = 5, current_depth: int = 1) -> Any:
-    """Recursively infer JSON schema, data types, and nesting levels.
+    """Infere recursivamente o schema JSON, tipos de dados e níveis de aninhamento.
 
     Args:
-        data: Parsed JSON object (dict, list, or primitive).
-        max_depth: Maximum recursion depth.
-        current_depth: Current depth level.
+        data: Objeto JSON parseado (dict, list ou primitivo).
+        max_depth: Profundidade máxima de recursão.
+        current_depth: Nível de profundidade atual.
 
     Returns:
-        Structured representation of the schema with data types.
+        Representação estruturada do schema com os tipos de dados.
     """
     if current_depth > max_depth:
         return "..."
@@ -56,7 +56,7 @@ def get_json_schema(data: Any, max_depth: int = 5, current_depth: int = 1) -> An
     elif isinstance(data, list):
         if not data:
             return "List[Empty]"
-        # Inspect first item as representative sample
+        # Inspeciona o primeiro item como amostra representativa
         sample_schema = get_json_schema(data[0], max_depth, current_depth + 1)
         return f"List[{sample_schema}]"
     else:
@@ -64,28 +64,28 @@ def get_json_schema(data: Any, max_depth: int = 5, current_depth: int = 1) -> An
 
 
 class SkillCornerDiscoveryParser:
-    """Parser class to inspect local SkillCorner Open Data files."""
+    """Classe de parser para inspecionar arquivos locais da SkillCorner Open Data."""
 
     def __init__(self, data_dir: Union[str, Path]):
-        """Initialize parser with root dataset directory.
+        """Inicializa o parser com o diretório raiz dos dados.
 
         Args:
-            data_dir: Path to directory containing SkillCorner data files.
+            data_dir: Caminho para a pasta contendo os arquivos da SkillCorner.
         """
         self.data_dir = Path(data_dir)
         self.metrics = DatasetMetrics()
         self.schemas: Dict[str, Any] = {}
 
     def scan_files(self) -> DatasetMetrics:
-        """Scan directory tree and categorize files."""
+        """Varre a árvore de diretórios e categoriza os arquivos encontrados."""
         if not self.data_dir.exists():
-            raise FileNotFoundError(f"Data directory not found: {self.data_dir}")
+            raise FileNotFoundError(f"Diretório de dados não encontrado: {self.data_dir}")
 
         categories = {
-            "Match Metadata": [],
-            "Aggregated Metrics": [],
-            "Dynamic Events & Tactical Tracking": [],
-            "Phases of Play": []
+            "Metadados de Partidas": [],
+            "Métricas Agregadas": [],
+            "Eventos Dinâmicos e Tracking Tático": [],
+            "Fases do Jogo": []
         }
 
         file_list = []
@@ -98,20 +98,20 @@ class SkillCornerDiscoveryParser:
                 file_list.append(rel_path)
 
                 if f == "matches.json" or f.endswith("_match.json"):
-                    categories["Match Metadata"].append(rel_path)
+                    categories["Metadados de Partidas"].append(rel_path)
                 elif f.endswith("aggregates_20242025.csv"):
-                    categories["Aggregated Metrics"].append(rel_path)
+                    categories["Métricas Agregadas"].append(rel_path)
                 elif f.endswith("_dynamic_events.csv"):
-                    categories["Dynamic Events & Tactical Tracking"].append(rel_path)
+                    categories["Eventos Dinâmicos e Tracking Tático"].append(rel_path)
                 elif f.endswith("_phases_of_play.csv"):
-                    categories["Phases of Play"].append(rel_path)
+                    categories["Fases do Jogo"].append(rel_path)
 
         self.metrics.file_tree = sorted(file_list)
         self.metrics.categories_found = categories
         return self.metrics
 
     def inspect_matches_metadata(self) -> Dict[str, Any]:
-        """Inspect matches.json metadata."""
+        """Inspeciona os metadados do arquivo matches.json."""
         matches_json_path = self.data_dir / "data" / "matches.json"
         if not matches_json_path.exists():
             matches_files = list(self.data_dir.glob("**/matches.json"))
@@ -135,7 +135,7 @@ class SkillCornerDiscoveryParser:
         return self.schemas.get("matches.json", {})
 
     def inspect_single_match_json(self) -> Dict[str, Any]:
-        """Inspect detailed single match JSON schema (e.g. <match_id>_match.json)."""
+        """Inspeciona o schema detalhado do JSON individual da partida (ex: <match_id>_match.json)."""
         match_json_files = list(self.data_dir.glob("**/*_match.json"))
         if match_json_files:
             sample_file = match_json_files[0]
@@ -158,8 +158,8 @@ class SkillCornerDiscoveryParser:
         return self.schemas.get("single_match.json", {})
 
     def inspect_tabular_data(self):
-        """Inspect dynamic events, phases of play, and physical aggregates CSVs."""
-        # Dynamic Events
+        """Inspeciona CSVs de eventos dinâmicos, fases de jogo e métricas físicas agregadas."""
+        # Eventos Dinâmicos
         dynamic_csvs = list(self.data_dir.glob("**/*_dynamic_events.csv"))
         for csv_path in dynamic_csvs:
             df = pd.read_csv(csv_path)
@@ -171,7 +171,7 @@ class SkillCornerDiscoveryParser:
             if "dynamic_events.csv" not in self.schemas:
                 self.schemas["dynamic_events.csv"] = {col: str(dtype) for col, dtype in df.dtypes.items()}
 
-        # Phases of Play
+        # Fases do Jogo
         phases_csvs = list(self.data_dir.glob("**/*_phases_of_play.csv"))
         for csv_path in phases_csvs:
             df = pd.read_csv(csv_path)
@@ -181,7 +181,7 @@ class SkillCornerDiscoveryParser:
             if "phases_of_play.csv" not in self.schemas:
                 self.schemas["phases_of_play.csv"] = {col: str(dtype) for col, dtype in df.dtypes.items()}
 
-        # Aggregates
+        # Agregados
         aggregates_csvs = list(self.data_dir.glob("**/aggregates/*.csv"))
         for csv_path in aggregates_csvs:
             filename = csv_path.name
@@ -193,7 +193,7 @@ class SkillCornerDiscoveryParser:
             self.schemas[f"aggregate_{filename}"] = {col: str(dtype) for col, dtype in df.dtypes.items()}
 
     def run_full_discovery(self) -> DatasetMetrics:
-        """Execute full discovery pipeline."""
+        """Executa a esteira completa de descoberta e inspeção."""
         self.scan_files()
         self.inspect_matches_metadata()
         self.inspect_single_match_json()
@@ -201,13 +201,13 @@ class SkillCornerDiscoveryParser:
         return self.metrics
 
     def generate_report(self, output_path: Union[str, Path]) -> str:
-        """Generate formatted markdown report and save to output_path.
+        """Gera o relatório estruturado em markdown e salva no caminho de saída.
 
         Args:
-            output_path: Target markdown file path.
+            output_path: Caminho do arquivo markdown de destino.
 
         Returns:
-            Generated report content.
+            Conteúdo do relatório gerado.
         """
         out_p = Path(output_path)
         out_p.parent.mkdir(parents=True, exist_ok=True)
@@ -291,7 +291,7 @@ class SkillCornerDiscoveryParser:
 
 
 def main():
-    """Main execution function for dataset discovery."""
+    """Função principal de execução da esteira de descoberta de dados."""
     project_root = Path(__file__).resolve().parents[3]
     opendata_dir = project_root / "data" / "opendata"
     report_output_path = project_root / "reports" / "DATA_STRUCTURE.md"

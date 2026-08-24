@@ -1,7 +1,7 @@
-"""Player domain entities.
+"""Entidades de domínio para jogadores de futebol.
 
-Pure business entities representing football players, roles, and playing time.
-Clean Architecture Domain layer - Zero external I/O or database dependencies.
+Entidades de negócio puras representando atletas, posições táticas e minutagem.
+Camada de Domínio da Clean Architecture - Zero dependências de I/O externo ou bibliotecas de terceiros.
 """
 
 from dataclasses import dataclass, field
@@ -10,7 +10,7 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class PlayerRole:
-    """Represents a player's tactical position/role."""
+    """Representa a posição e o papel tático do atleta."""
     id: int
     name: str
     acronym: str
@@ -19,17 +19,17 @@ class PlayerRole:
 
 @dataclass(frozen=True)
 class PlayerPlayingTime:
-    """Represents playing time statistics for a player in a match."""
+    """Estatísticas de tempo de jogo de um atleta em uma partida."""
     minutes_played: float = 0.0
-    minutes_tip: float = 0.0  # Team In Possession
-    minutes_otip: float = 0.0  # Opponent Team In Possession
+    minutes_tip: float = 0.0  # Tempo em posse da equipe (Team In Possession)
+    minutes_otip: float = 0.0  # Tempo sem a posse da equipe (Opponent Team In Possession)
     start_frame: Optional[int] = None
     end_frame: Optional[int] = None
 
 
 @dataclass
 class Player:
-    """Represents a football player entity."""
+    """Representa a entidade de um jogador de futebol."""
     id: int
     short_name: str
     first_name: Optional[str] = None
@@ -50,7 +50,7 @@ class Player:
 
     @property
     def full_name(self) -> str:
-        """Get player's full name or short name fallback."""
+        """Retorna o nome completo do atleta ou o nome abreviado como fallback."""
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.short_name

@@ -1,1 +1,1 @@
-"""Unit tests package for domain entities."""
+"""Pacote de testes unitários para entidades da camada de domínio."""

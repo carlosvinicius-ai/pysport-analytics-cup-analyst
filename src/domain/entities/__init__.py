@@ -1,1 +1,1 @@
-"""Domain entities package."""
+"""Pacote de entidades puras de domínio."""

@@ -1,1 +1,1 @@
-"""Infrastructure package for SkillCorner Data Analytics."""
+"""Pacote de infraestrutura para Sports Analytics da SkillCorner."""

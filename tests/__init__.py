@@ -1,1 +1,1 @@
-"""Tests package for SkillCorner Sports Analytics."""
+"""Pacote de testes automatizados para Sports Analytics da SkillCorner."""

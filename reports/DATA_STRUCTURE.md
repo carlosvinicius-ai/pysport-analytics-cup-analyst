@@ -17,7 +17,7 @@ Este relatório documenta a estrutura, schemas, relacionamentos entre entidades 
 
 ## 2. Árvore de Arquivos e Categorização dos Dados
 
-### Match Metadata (11 arquivos)
+### Metadados de Partidas (11 arquivos)
 - `data\matches.json`
 - `data\matches\1886347\1886347_match.json`
 - `data\matches\1899585\1899585_match.json`
@@ -30,12 +30,12 @@ Este relatório documenta a estrutura, schemas, relacionamentos entre entidades 
 - `data\matches\2015213\2015213_match.json`
 - `data\matches\2017461\2017461_match.json`
 
-### Aggregated Metrics (3 arquivos)
+### Métricas Agregadas (3 arquivos)
 - `data\aggregates\aus1league_obraggregates_20242025.csv`
 - `data\aggregates\aus1league_passingaggregates_20242025.csv`
 - `data\aggregates\aus1league_physicalaggregates_20242025.csv`
 
-### Dynamic Events & Tactical Tracking (10 arquivos)
+### Eventos Dinâmicos e Tracking Tático (10 arquivos)
 - `data\matches\1886347\1886347_dynamic_events.csv`
 - `data\matches\1899585\1899585_dynamic_events.csv`
 - `data\matches\1925299\1925299_dynamic_events.csv`
@@ -47,7 +47,7 @@ Este relatório documenta a estrutura, schemas, relacionamentos entre entidades 
 - `data\matches\2015213\2015213_dynamic_events.csv`
 - `data\matches\2017461\2017461_dynamic_events.csv`
 
-### Phases of Play (10 arquivos)
+### Fases do Jogo (10 arquivos)
 - `data\matches\1886347\1886347_phases_of_play.csv`
 - `data\matches\1899585\1899585_phases_of_play.csv`
 - `data\matches\1925299\1925299_phases_of_play.csv`
