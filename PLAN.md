@@ -12,11 +12,18 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
 
 ## 📌 MARCO 1: Engenharia de Dados Espaciais & Domínio (Clean Architecture)
 
+- [x] **Governança de ADRs: Criação da estrutura `docs/adr/` e template (`docs/adr/0000-template.md`)**
+  - **Camada:** `Documentação / Governança`
+  - **Descrição:** Definir o padrão de registros de decisão arquitetural para manter o rastreamento das escolhas técnicas do projeto.
+
+- [x] **Governança de ADRs: Registro da ADR 0001 (`docs/adr/0001-adocao-clean-architecture-e-polars.md`)**
+  - **Camada:** `Documentação / Governança`
+  - **Descrição:** Documentar a decisão de adoção da Clean Architecture e do Polars para parsing de dados espaciais de alta performance.
+
 - [x] **Tarefa 1.1: Entidades Puras de Domínio (`src/domain/entities/player.py`, `match.py`)**
   - **Camada:** `Domain / Entities`
   - **Descrição:** Criar dataclasses puras `Player`, `Team`, `PitchDimensions` e `Match` sem dependências I/O ou de frameworks.
   - **Verificação:** Testes unitários em `tests/unit/domain/test_entities.py`.
-
 
 - [ ] **Tarefa 1.2: Entidades de Eventos Espaciais e Frames (`src/domain/entities/event.py`, `frame.py`)**
   - **Camada:** `Domain / Entities`
@@ -63,7 +70,7 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
 
 - [ ] **Tarefa 2.3: Use Case de Treinamento e Avaliação do Baseline (`src/use_cases/modeling/train_xpass_baseline.py`)**
   - **Camada:** `Use Cases / Application`
-  - **Descrição:** Criar `TrainXPassBaselineUseCase` orquestrando extração de atributos espaciais, treino, cálculo de Log-Loss, ROC-AUC, Brier Score e salvamento dos artefatos do modelo em `reports/`.
+  - **Descrição:** Criar `TrainXPassBaselineUseCase` orquestrando extração de atributos espaciais, treino, cálculo de Log-Loss, ROC-AUC, Brier Score e salvamento dos artefatos do modelo em `reports/`. Documentar modelo baseline em nova ADR.
   - **Verificação:** Teste de ponta a ponta gerando métricas do baseline em `reports/XPASS_BASELINE_METRICS.md`.
 
 ---
@@ -72,8 +79,9 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
 
 - [ ] **Tarefa 3.1: Modelo Profundo / Avançado de Probabilidade de Passe (`src/infrastructure/ml_adapters/xpass_deep.py`)**
   - **Camada:** `Infrastructure / ML Adapters`
-  - **Descrição:** Construir arquitetura de Rede Neural Profunda (PyTorch / Multi-Layer Perceptron) incorporando embedding posicional e vetores de pressão espacial.
+  - **Descrição:** Construir arquitetura de Rede Neural Profunda (PyTorch / Multi-Layer Perceptron) incorporando embedding posicional e vetores de pressão espacial. Documentar arquitetura de redes profundas em nova ADR.
   - **Verificação:** Teste unitário de forward-pass e loss computation em `tests/unit/infrastructure/test_xpass_deep.py`.
+
 
 - [ ] **Tarefa 3.2: Use Case de Cálculo do Valor de Desmarque sem Bola (`src/use_cases/modeling/off_ball_value.py`)**
   - **Camada:** `Use Cases / Application`
