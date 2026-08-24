@@ -35,10 +35,15 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
   - **Verificação:** Testes unitários em `tests/unit/domain/test_events.py`.
 
 
-- [ ] **Tarefa 1.3: Protocolos e Interfaces de Repositório (`src/domain/protocols/repository.py`)**
+- [x] **Governança de ADRs: Registro da ADR 0003 (`docs/adr/0003-protocolos-e-interfaces-de-repositorio.md`)**
+  - **Camada:** `Documentação / Governança`
+  - **Descrição:** Documentar a definição de protocolos abstratos para Inversão de Dependência (DIP) e Segregação de Interfaces (ISP).
+
+- [x] **Tarefa 1.3: Protocolos e Interfaces de Repositório (`src/domain/protocols/repository.py`)**
   - **Camada:** `Domain / Protocols`
-  - **Descrição:** Definir `typing.Protocol` para `IDatasetRepository` e `ITrackingParser`, desacoplando a infraestrutura do domínio.
-  - **Verificação:** Teste de conformidade de tipo (`mypy` / `pytest`).
+  - **Descrição:** Definir `typing.Protocol` para `IDatasetRepository`, `IMatchRepository`, `IEventRepository` e `ITrackingRepository`, desacoplando a infraestrutura do domínio.
+  - **Verificação:** Testes unitários de conformidade em `tests/unit/domain/test_protocols.py`.
+
 
 - [ ] **Tarefa 1.4: Parser Concreto de Metadados e Elencos (`src/infrastructure/parsers/match_parser.py`)**
   - **Camada:** `Infrastructure / Parsers`
