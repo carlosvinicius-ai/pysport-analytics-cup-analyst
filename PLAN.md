@@ -51,19 +51,28 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
   - **Verificação:** Teste de integração em `tests/integration/infrastructure/test_match_parser.py`.
 
 
-- [ ] **Tarefa 1.5: Parser Concreto de Eventos Dinâmicos (`src/infrastructure/parsers/tracking_parser.py`)**
+- [x] **Tarefa 1.5: Parser Concreto de Eventos Dinâmicos (`src/infrastructure/parsers/tracking_parser.py`)**
   - **Camada:** `Infrastructure / Parsers`
   - **Descrição:** Criar parser em Polars/Pandas para `<match_id>_dynamic_events.csv` extraindo eventos de passe e corridas sem bola com tipagem adequada.
   - **Verificação:** Teste de integração em `tests/integration/infrastructure/test_tracking_parser.py`.
 
-- [ ] **Tarefa 1.6: Use Case de Extração de Features Espaciais (`src/use_cases/feature_extraction/spatial_features.py`)**
+
+- [x] **Tarefa 1.6: Use Case de Extração de Features Espaciais (`src/use_cases/feature_extraction/spatial_features.py`)**
   - **Camada:** `Use Cases / Application`
   - **Descrição:** Criar `ComputeSpatialFeaturesUseCase` para calcular:
     - Distância para a linha defensiva (`last_defensive_line_x_start`, `delta_to_last_defensive_line_start`)
     - Pressão defensiva e distância de inter-jogadores (`interplayer_distance_start`, `angle_of_engagement`)
     - Separação espacial (`separation_start`, `separation_gain`)
     - Ângulo e distância do passe (`pass_angle`, `pass_distance`)
-  - **Verificação:** Teste unitário em `tests/unit/use_cases/test_spatial_features.py`.
+    - Métricas derivadas de ganho territorial (`progression_x`, `lateral_displacement`) e distâncias/ângulos ao gol
+  - **Verificação:** Testes unitários em `tests/unit/use_cases/test_spatial_features.py`.
+
+- [x] **Tarefa 1.7: Exploração Visual e Relatório Gráfico do Dataset (`notebooks/exploration.ipynb`)**
+  - **Camada:** `Presentation / Notebooks`
+  - **Descrição:** Estruturar notebook de EDA visual integrando todas as camadas da Clean Architecture com mapas de passes no gramado (`mplsoccer`), densidades KDE de ações, análise de pressão defensiva e dinâmicas de corridas de desmarque sem bola.
+  - **Verificação:** Execução do Jupyter Notebook em `notebooks/exploration.ipynb`.
+
+
 
 ---
 
