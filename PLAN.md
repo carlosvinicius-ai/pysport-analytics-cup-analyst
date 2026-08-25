@@ -45,10 +45,11 @@ Este plano detalha o roteiro incremental de desenvolvimento do projeto, dividido
   - **Verificação:** Testes unitários de conformidade em `tests/unit/domain/test_protocols.py`.
 
 
-- [ ] **Tarefa 1.4: Parser Concreto de Metadados e Elencos (`src/infrastructure/parsers/match_parser.py`)**
+- [x] **Tarefa 1.4: Parser Concreto de Metadados e Elencos (`src/infrastructure/parsers/match_parser.py`)**
   - **Camada:** `Infrastructure / Parsers`
   - **Descrição:** Criar leitor robusto de `matches.json` e `<match_id>_match.json` para carregar partidas e escalações de jogadores.
   - **Verificação:** Teste de integração em `tests/integration/infrastructure/test_match_parser.py`.
+
 
 - [ ] **Tarefa 1.5: Parser Concreto de Eventos Dinâmicos (`src/infrastructure/parsers/tracking_parser.py`)**
   - **Camada:** `Infrastructure / Parsers`
