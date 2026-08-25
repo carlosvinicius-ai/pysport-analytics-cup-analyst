@@ -8,101 +8,123 @@ O objetivo deste projeto é construir uma plataforma modular de **Data Science &
 ## 1. Objetivos e Casos de Uso de Data Science
 
 ### FOCO PRINCIPAL (Fase 1): Spatial Analytics & Deep Learning — Probabilidade de Passe (`xPass`) e Valor do Desmarque sem Bola (*Off-Ball Run Value*)
+
 - **Objetivo:** Quantificar o risco e a recompensa de cada tentativa de passe em janelas sob pressão defensiva e avaliar o valor criado pelos atletas através de movimentações e desmarques sem a posse da bola.
-- **Mapeamento de Colunas (`DATA_STRUCTURE.md`):**
-  - **Coordenadas e Separação Espacial:** `x_start`, `y_start`, `x_end`, `y_end`, `separation_start`, `separation_end`, `separation_gain`.
-  - **Contexto da Linha Defensiva:** `last_defensive_line_x_start`, `delta_to_last_defensive_line_start`, `inside_defensive_shape_start`.
-  - **Pressão e Interplay:** `interplayer_distance`, `interplayer_distance_start`, `interplayer_angle`, `angle_of_engagement`.
-  - **Métricas Avançadas Existentes no Dataset:** `xpass_completion`, `xthreat`, `passing_option_score`, `first_line_break`, `last_line_break`.
+
+- **Matriz de Features Espaciais Descobertas e Construídas (`ComputeSpatialFeaturesUseCase`):**
+  - **Geometria Territorial do Passe:**
+    - `pass_distance`: Distância euclidiana total percorrida pelo passe (em metros).
+    - `pass_angle`: Ângulo trigonométrico de execução da trajetória.
+    - `progression_x`: Ganho territorial para frente ($x_{\text{end}} - x_{\text{start}}$ em metros).
+    - `lateral_displacement`: Deslocamento lateral no campo ($|y_{\text{end}} - y_{\text{start}}|$).
+  - **Orientação Espacial em Relação ao Gol Adversário ($x = 52.5$m, $y = 0.0$m):**
+    - `distance_to_goal_start` e `distance_to_goal_end`: Distância em linha reta até a trave adversária.
+    - `angle_to_goal_start` e `angle_to_goal_end`: Ângulo angular de visão do gol.
+  - **Pressão Defensiva e Separação Espacial (Limiar Empírico do EDA):**
+    - `interplayer_distance_start`: Distância do marcador mais próximo no momento do passe.
+    - `has_defensive_pressure`: Flag booleana de pressão imediata (quando `interplayer_distance_start` $\le 3.0$ metros, ponto de inflexão comprovado onde a taxa de acerto cai de $82\%$ para $< 58\%$).
+    - `separation_start`, `separation_end` e `separation_gain`: Espaço criado pelo atleta antes e depois da ação.
+  - **Contexto de Linha Defensiva e Ruptura:**
+    - `last_defensive_line_x_start`: Posição da última linha defensiva adversária.
+    - `delta_to_last_defensive_line_start`: Distância do passador para a linha de zaga.
+    - `first_line_break` e `last_line_break`: Flags indicativas de quebra de linhas táticas.
+  - **Métricas de Benchmark da SkillCorner:**
+    - `xthreat` ($x\text{T}$): Valor de ameaça esperada gerada pelo evento.
+    - `xpass_completion`: Probabilidade de conclusão fornecida no dataset para comparação de calibração.
+
+- **Métrica de Desempenho do Passador ($x\text{Pass Added}$):**
+  $$\text{xPass Added} (xPA) = \sum_{p \in \text{completos}} (1 - xPass_p) - \sum_{p \in \text{incompletos}} (xPass_p)$$
+  Permite isolar a habilidade técnica individual do passador contra a facilidade/dificuldade inerente do contexto espacial da jogada.
+
 - **Abordagem Algorítmica:**
-  - **Modelagem xPass Baseline:** Classificador supervisionado (XGBoost / Regressão Logística) para estimar $P(\text{pass\_outcome} = \text{completed} \mid \text{Spatial Features})$.
-  - **Modelagem xPass Avançada & Valor sem Bola:** Redes Neurais Profundas (MLP) ou **Graph Neural Networks (GNN)** para estimar a probabilidade de passe e o ganho de ameaça gerado por corridas sem bola ($\text{Off-Ball Value} = \text{separation\_gain} \times \Delta\text{xThreat}$).
-- **Entrega Analítica:** Mapa térmico de controle de espaço (*Pitch Control*) e ranking de atletas que criam mais valor através do posicionamento e desmarque.
+  - **Marco 2 (Baseline xPass):** Classificador tabular supervisionado (**XGBoost / LightGBM**) com calibração isotônica para estimar $P(\text{pass\_outcome} = \text{completed} \mid \text{Spatial Features})$.
+  - **Marco 3 (xPass Avançado & Valor sem Bola):** Arquitetura Neural Profunda (MLP com *Feature Interactions* / Embeddings Posicionais) e cálculo do valor do desmarque:
+    $$\text{Off-Ball Run Value} = \text{separation\_gain} \times \Delta\text{xThreat}$$
 
 ---
 
 ### FOCO SECUNDÁRIO (Fase 2): Machine Learning Clássico — Profiling Físico-Tático e Agrupamento de Atletas
-- **Objetivo:** Identificar perfis funcionais e padrões de intensidade física de atletas (ex: *High-Volume Engine*, *Explosive Sprinter*, *Defensive Line-Breaker*) além da posição nominal de escalação.
-- **Mapeamento de Colunas (`DATA_STRUCTURE.md`):**
-  - **Métricas Físicas e Distâncias:** `distance_covered`, `speed_avg`, `speed_avg_band`, `speed_difference`.
-  - **Métricas de Intensidade e Ações sem Bola:** `n_off_ball_runs`, `n_passing_options`, `n_passing_options_line_break`, `n_simultaneous_runs`.
-  - **Métricas da Aus1League Physical Aggregates:** Distâncias acumuladas por zonas de velocidade (Caminhada, Corrida Leve, Alta Intensidade, Sprints).
+
+- **Objetivo:** Identificar perfis funcionais e padrões de intensidade física de atletas (ex: *High-Volume Engine*, *Explosive Sprinter*, *Defensive Line-Breaker*) combinando eventos por partida e agregados de temporada da A-League.
+- **Base de Dados Utilizada:**
+  - `data/opendata/data/aggregates/aus1league_physicalaggregates_20242025.csv`
+  - `data/opendata/data/aggregates/aus1league_passingaggregates_20242025.csv`
+  - `data/opendata/data/aggregates/aus1league_obraggregates_20242025.csv`
 - **Abordagem Algorítmica:**
-  - Redução de dimensionalidade com **PCA** ou **UMAP** para projeção do espaço físico-tático.
-  - Algoritmos de agrupamento não-supervisionado: **K-Means** ou **Gaussian Mixture Models (GMM)**.
-- **Entrega Analítica:** Matriz de Similaridade de Jogadores (procura por substitutos com perfil físico equivalente) e Perfis Radar/Spider charts para comissão técnica.
+  - Redução de dimensionalidade com **PCA** / **UMAP** para projeção do espaço de atributos.
+  - Algoritmos de agrupamento não-supervisionado: **K-Means** e **Gaussian Mixture Models (GMM)**.
+- **Entrega Analítica:** Matriz de Similaridade de Atletas (busca por substitutos de elenco) e Radar Charts táticos.
 
 ---
 
 ## 2. Arquitetura do Sistema (Clean Architecture)
 
-A estrutura do código fonte em `src/` obedece a separação estrita de responsabilidades:
+O código segue rigorosamente as 4 camadas da Clean Architecture, com decisões registradas em `docs/adr/`:
 
 ```
 src/
-├── domain/                  # Camada de Domínio (Entidades e Contratos Puros)
-│   ├── entities/            # Dataclasses / Modelos Pydantic v2 sem dependências I/O
-│   │   ├── player.py        # Entidade Player, PlayerProfile
-│   │   ├── match.py         # Entidade Match, Team, PitchDimensions
-│   │   ├── event.py         # Entidade DynamicEvent, PassEvent, OffBallRun
-│   │   ├── frame.py         # Entidade TrackingFrame, PlayerPosition
-│   │   └── metrics.py       # Dataclass PhysicalMetrics, SpatialMetrics
-│   └── protocols/           # Interfaces e Protocolos abstratos (typing.Protocol)
-│       ├── repository.py    # Protocol IDatasetRepository
-│       └── model.py         # Protocol ITacticalModel, IXPassPredictor
+├── domain/                  # Camada de Domínio (Entidades e Protocolos Puros)
+│   ├── entities/            # Dataclasses imutáveis (frozen=True) em metros reais (ADR 0002)
+│   │   ├── player.py        # Player, PlayerRole, PlayerPlayingTime
+│   │   ├── match.py         # Match, Team, PitchDimensions, Stadium, MatchPeriod
+│   │   ├── event.py         # PassEvent, OffBallRunEvent
+│   │   └── frame.py         # TrackingFrame, PlayerPosition, BallPosition
+│   └── protocols/           # Contratos abstratos com @runtime_checkable (ADR 0003)
+│       ├── repository.py    # IMatchRepository, IEventRepository, ITrackingRepository, IDatasetRepository
+│       └── model.py         # IXPassModel, IClusteringModel
 │
-├── use_cases/               # Camada de Casos de Uso (Orquestração das Regras de Negócio)
-│   ├── feature_extraction/  # Extração e engenharia de atributos espaciais e físicos
-│   │   ├── spatial_features.py   # ComputeSpatialFeaturesUseCase (distância linha defensiva, pressão, ângulo, separação)
-│   │   └── physical_features.py  # ComputePhysicalAggregatesUseCase
-│   └── modeling/            # Fluxos de Treinamento e Predição
+├── use_cases/               # Camada de Casos de Uso (Lógica da Aplicação)
+│   ├── feature_extraction/  # Engenharia de atributos espaciais e físicos
+│   │   ├── spatial_features.py   # ComputeSpatialFeaturesUseCase (Matriz de variáveis espaciais)
+│   │   └── physical_features.py  # ComputePhysicalAggregatesUseCase (Consolidação física)
+│   └── modeling/            # Orquestração de Treinamento, Validação e Métricas
+│       ├── validation_split.py   # MatchChronologicalSplitter (Zero Data Leakage)
 │       ├── train_xpass.py        # TrainXPassBaselineUseCase & TrainXPassAdvancedUseCase
 │       ├── off_ball_value.py     # ComputeOffBallRunValueUseCase
 │       └── cluster_players.py    # ClusterPlayerProfilesUseCase
 │
-├── infrastructure/          # Camada de Infraestrutura (I/O, Bibliotecas Externas, Parsers)
-│   ├── parsers/             # Leitores de JSON e CSV da SkillCorner
-│   │   ├── discovery.py     # Script de descoberta de dados
-│   │   ├── match_parser.py  # SkillCornerMatchParser (Match metadata & rosters)
-│   │   ├── tracking_parser.py # SkillCornerTrackingParser (Events & tracking frames)
-│   │   └── csv_parser.py    # SkillCornerCSVParser (Polars for high-speed I/O)
-│   └── ml_adapters/         # Adaptadores Scikit-Learn, XGBoost, PyTorch
-│       ├── xpass_baseline.py# XGBoostXPassAdapter
-│       ├── xpass_deep.py    # PyTorchXPassAdapter
-│       └── clustering.py    # SklearnClusterAdapter
+├── infrastructure/          # Camada de Infraestrutura (I/O, Polars e ML Adapters)
+│   ├── parsers/             # Ingestão de alta performance com Polars (ADR 0001)
+│   │   ├── discovery.py     # Auditoria e volumetria de dados
+│   │   ├── match_parser.py  # SkillCornerMatchParser (JSONs de partidas e elencos)
+│   │   └── tracking_parser.py # SkillCornerTrackingParser (CSV dinâmico com Polars)
+│   └── ml_adapters/         # Implementações concretas de modelos de ML/DL
+│       ├── xpass_baseline.py# XGBoostXPassAdapter (XGBoost / LightGBM)
+│       ├── xpass_deep.py    # PyTorchXPassAdapter (Rede Neural Profunda)
+│       └── clustering.py    # SklearnClusterAdapter (K-Means/GMM com PCA)
 │
-└── presentation/            # Camada de Apresentação e CLI
-    ├── cli.py               # Interface de Linha de Comando (Click / Argparse)
-    └── report_generator.py # Gerador de Saídas em Markdown/HTML e visualizações
+└── presentation/            # Camada de Apresentação, Notebooks e Visualizações
+    ├── spatial_visualizer.py# Gerador de Pass Maps, Heatmaps e Pitch Control
+    ├── cli.py               # Interface CLI para execução de pipelines
+    └── notebooks/           # exploration.ipynb (EDA visual com mplsoccer)
 ```
 
 ---
 
 ## 3. Plano de Validação e Métricas Estatísticas
 
-### 3.1. Métricas de Avaliação por Modelo
-
-1. **Modelo xPass Baseline e Avançado (Spatial Analytics / Deep Learning):**
-   - **Log-Loss (Cross-Entropy Loss):** Métrica primária para calibração de probabilidades preditas de passes completos vs incompletos.
-   - **ROC-AUC & PR-AUC:** Área sob a curva ROC e Precisão-Recall para lidar com desbalanceamento de passes de alto risco.
-   - **Brier Score:** Avalia o erro quadrático médio das probabilidades preditas ($BS = \frac{1}{N}\sum (p_i - y_i)^2$).
-   - **Expected Calibration Error (ECE):** Mede o alinhamento das probabilidades preditas com a frequência real de acerto.
-
-2. **Profiling Físico-Tático (ML Clássico - Clusterização):**
-   - **Silhouette Score:** Mede o quão bem separado cada cluster está em relação aos clusters vizinhos (alvo $> 0.45$).
-   - **Davies-Bouldin Index:** Avalia a dispersão interna dos clusters comparada à distância entre eles (quanto menor, melhor).
-   - **Calinski-Harabasz Index:** Razão entre a dispersão inter-cluster e intra-cluster.
+### 3.1. Métricas de Avaliação dos Modelos de xPass
+- **Log-Loss (Binary Cross-Entropy):** Métrica primária para aferir a qualidade probabilística das predições ($-\frac{1}{N}\sum [y_i \ln(p_i) + (1-y_i)\ln(1-p_i)]$).
+- **Brier Score:** Erro quadrático médio das probabilidades preditas ($BS = \frac{1}{N}\sum (p_i - y_i)^2$).
+- **ROC-AUC & PR-AUC:** Capacidade discriminativa entre passes completos e interceptados, mesmo em cenários de alta pressão defensiva.
+- **Expected Calibration Error (ECE):** Aferição de confiabilidade da calibração (a probabilidade de $70\%$ deve corresponder a 7 acertos a cada 10 passes na prática).
+- **Interpretabilidade (SHAP Values):** Importância e impacto marginal de cada feature no cálculo do xPass.
 
 ---
 
 ### 3.2. Estratégia de Validação Temporal e Prevenção de Data Leakage
+1. **Divisão Baseada em Partidas Ordenadas Cronologicamente (*Match-Based Chronological Split*):**
+   - **Regra Rígida:** NUNCA misturar eventos ou frames da mesma partida entre conjuntos de treino e teste.
+   - Partidas divididas por ordem cronológica: **7 Partidas para Treino (70%)**, **1 Partida para Validação (10%)** e **2 Partidas para Teste Final (20%)**.
+2. **Isolamento de Pré-processamento (*Strict Pipeline Isolation*):**
+   - Todo escalonamento (`StandardScaler`) e imputação de valores ausentes são ajustados exclusivamente no conjunto de treino (`fit`) e aplicados nos dados de validação e teste (`transform`).
 
-Para garantir a integridade científica e evitar o vazamento de informações entre treino e teste (*Data Leakage*):
+---
 
-1. **Divisão Baseada em Partida (*Match-Based Split*):**
-   - **Regra Rígida:** NUNCA misturar eventos ou frames da mesma partida entre conjuntos de Treino, Validação e Teste.
-   - As partidas serão divididas na proporção **70% Treino, 15% Validação, 15% Teste** ou por ordenação cronológica de realização do jogo.
+## 4. Governança de Decisões Arquiteturais (ADRs)
 
-2. **Isolamento de Pré-processamento (*Strict Scaler Pipeline*):**
-   - Todos os pré-processamentos (imputação de nulos, padronização `StandardScaler`, redução `PCA`) serão ajustados (*fit*) **exclusivamente nos dados de treino**.
-   - Apenas a transformação (*transform*) será aplicada nos conjuntos de validação e teste.
+| ADR | Título | Status |
+| :--- | :--- | :--- |
+| [ADR 0001](file:///d:/Hackaton/pysport-analytics-cup-analyst/docs/adr/0001-adocao-clean-architecture-e-polars.md) | Adoção da Clean Architecture e Polars para Performance | Aceito ✅ |
+| [ADR 0002](file:///d:/Hackaton/pysport-analytics-cup-analyst/docs/adr/0002-representacao-entidades-espaciais-e-coordenadas.md) | Representação em Metros Reais e Imutabilidade de Entidades Espaciais | Aceito ✅ |
+| [ADR 0003](file:///d:/Hackaton/pysport-analytics-cup-analyst/docs/adr/0003-protocolos-e-interfaces-de-repositorio.md) | Contratos Abstratos de Repositório e Inversão de Dependência (DIP/ISP) | Aceito ✅ |
